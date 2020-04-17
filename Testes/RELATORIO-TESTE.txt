@@ -3,9 +3,221 @@ Gabriel Busatto Matrella - RM80387
 public class JulgamentoPrisioneiroTeste {
 	
 	@Test
-	public void testeJulgamentoPrisioneiro() {
+	public void testeCalculoPenaInocencia() {
+		Resposta respostaPrisioneiroA = Resposta.DELACAO;
+		Resposta respostaPrisoneiroB = Resposta.SEM_DELACAO;
 		
+		JulgamentoPrisioneiro julgamentoPrisioneiro = new JulgamentoPrisioneiro();
+		int penaCalculada = julgamentoPrisioneiro.calculaPena(respostaPrisioneiroA, respostaPrisoneiroB);
+		
+		assertEquals(10, penaCalculada);
 	}
 	
 	
 }
+
+1 -> Teste executado com erro: java.lang.Error: Unresolved compilation problems: 
+	Resposta cannot be resolved to a type
+	Resposta cannot be resolved to a variable
+	Resposta cannot be resolved to a type
+	Resposta cannot be resolved to a variable
+	
+	at JulgamentoPrisioneiroTeste.testeCalculoPenaInocencia(JulgamentoPrisioneiroTeste.java:9)
+	
+2 -> Adicionado um enum de Resposta que estava faltando e por isso o erro do primeiro teste foi causado.
+		   
+	 public enum Resposta {
+		 DELACAO, SEM_DELACAO
+	 }
+
+3 -> Implementado todos metodos de teste
+
+public class JulgamentoPrisioneiroTeste {
+	
+	private JulgamentoPrisioneiro julgamentoPrisioneiro;
+
+	@Before
+	public void init() {
+		julgamentoPrisioneiro = new JulgamentoPrisioneiro();
+	}
+	
+	@Test
+	public void testeCalculoPenaInocencia() {
+		int penaInocenciaCorreto = 0;
+		
+		int penaCalculada = julgamentoPrisioneiro.calculaPena(Resposta.SEM_DELACAO, Resposta.SEM_DELACAO);
+		assertEquals(penaInocenciaCorreto, penaCalculada);
+	}
+	
+	@Test
+	public void testeCalculoPenaCondenacaoMutua() {
+		int penaCondenacaoMutuaCorreto = 5;
+		
+		int penaCalculada = julgamentoPrisioneiro.calculaPena(Resposta.DELACAO, Resposta.DELACAO);
+		assertEquals(penaCondenacaoMutuaCorreto, penaCalculada);
+	}
+	
+	@Test
+	public void testeCalculoPenaCondenacaoIndividual() {
+		int penaCondenacaoIndividualCorreto = 10;
+		
+		int penaCalculada = julgamentoPrisioneiro.calculaPena(Resposta.DELACAO, Resposta.SEM_DELACAO);
+		assertEquals(penaCondenacaoIndividualCorreto, penaCalculada);
+	}
+	
+	@Test
+	public void testeCalculoPenaCondenacaoCumplices() {
+		int penaCondenacaoCumplicesCorreto = 1;
+		
+		int penaCalculada = julgamentoPrisioneiro.calculaPena(Resposta.SEM_DELACAO, Resposta.DELACAO);
+		assertEquals(penaCondenacaoCumplicesCorreto, penaCalculada);
+	}
+}
+
+4 -> Executado metodos de teste com erro, as variaveis preenchidas pelo programador em java estao 
+	 com valores de pena incorretos.
+	
+	JulgamentoPrisioneiroTeste
+	testeCalculoPenaCondenacaoMutua(JulgamentoPrisioneiroTeste)
+	java.lang.AssertionError: expected:<5> but was:<15>
+	
+	testeCalculoPenaCondenacaoCumplices(JulgamentoPrisioneiroTeste)
+	java.lang.AssertionError: expected:<1> but was:<10>
+	
+	testeCalculoPenaCondenacaoIndividual(JulgamentoPrisioneiroTeste)
+	java.lang.AssertionError: expected:<10> but was:<13>
+	
+	testeCalculoPenaInocencia(JulgamentoPrisioneiroTeste)
+	java.lang.AssertionError: expected:<0> but was:<11>
+	
+5 -> Corrigido valores nas variaveis de pena.
+	
+	private static int PENA_INOCENCIA = 0;
+	
+	private static int PENA_CONDENACAO_MUTUA = 5;
+	
+	private static int PENA_CONDENACAO_INDIVIDUAL = 10;
+	
+	private static int PENA_CONDENACAO_CUMPLICES = 1;
+	
+6 -> Teste com valores de pena corrigidos persistindo com erro em alguns dos testes.
+	
+	JulgamentoPrisioneiroTeste
+	testeCalculoPenaCondenacaoCumplices(JulgamentoPrisioneiroTeste)
+	java.lang.AssertionError: expected:<1> but was:<10>
+	
+	testeCalculoPenaCondenacaoIndividual(JulgamentoPrisioneiroTeste)
+	java.lang.AssertionError: expected:<10> but was:<0>
+	
+	testeCalculoPenaInocencia(JulgamentoPrisioneiroTeste)
+	java.lang.AssertionError: expected:<0> but was:<1>
+	
+7 -> Alterada logica do metodo calculaPena na classe JulgamentoPrisioneiro para a correta.
+	
+	public int calculaPena(Resposta respostaPrisioneiroA, Resposta respostaPrisioneiroB) {
+		if (respostaPrisioneiroA == Resposta.DELACAO) {
+			if (respostaPrisioneiroB == Resposta.DELACAO) {
+				return PENA_CONDENACAO_MUTUA;
+			} else {
+				return PENA_CONDENACAO_INDIVIDUAL;
+			}
+		} else {
+			if (respostaPrisioneiroB == Resposta.DELACAO) {
+				return PENA_CONDENACAO_CUMPLICES;
+			} else {
+				return PENA_INOCENCIA;
+			}
+		}
+	}
+	
+8 -> Testes executados com sucesso.
+
+Versao final da classe JulgamentoPrisioneiro
+
+public class JulgamentoPrisioneiro {
+
+	private static int PENA_INOCENCIA = 0;
+
+	private static int PENA_CONDENACAO_MUTUA = 5;
+
+	private static int PENA_CONDENACAO_INDIVIDUAL = 10;
+
+	private static int PENA_CONDENACAO_CUMPLICES = 1;
+
+	public int calculaPena(Resposta respostaPrisioneiroA, Resposta respostaPrisioneiroB) {
+		if (respostaPrisioneiroA == Resposta.DELACAO) {
+			if (respostaPrisioneiroB == Resposta.DELACAO) {
+				return PENA_CONDENACAO_MUTUA;
+			} else {
+				return PENA_CONDENACAO_INDIVIDUAL;
+			}
+		} else {
+			if (respostaPrisioneiroB == Resposta.DELACAO) {
+				return PENA_CONDENACAO_CUMPLICES;
+			} else {
+				return PENA_INOCENCIA;
+			}
+		}
+	}
+
+}
+
+Versao final da classe JulgamentoPrisioneiroTeste
+
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Before;
+import org.junit.Test;
+
+public class JulgamentoPrisioneiroTeste {
+	
+	private JulgamentoPrisioneiro julgamentoPrisioneiro;
+
+	@Before
+	public void init() {
+		julgamentoPrisioneiro = new JulgamentoPrisioneiro();
+	}
+	
+	@Test
+	public void testeCalculoPenaInocencia() {
+		int penaInocenciaCorreto = 0;
+		
+		int penaCalculada = julgamentoPrisioneiro.calculaPena(Resposta.SEM_DELACAO, Resposta.SEM_DELACAO);
+		assertEquals(penaInocenciaCorreto, penaCalculada);
+	}
+	
+	@Test
+	public void testeCalculoPenaCondenacaoMutua() {
+		int penaCondenacaoMutuaCorreto = 5;
+		
+		int penaCalculada = julgamentoPrisioneiro.calculaPena(Resposta.DELACAO, Resposta.DELACAO);
+		assertEquals(penaCondenacaoMutuaCorreto, penaCalculada);
+	}
+	
+	@Test
+	public void testeCalculoPenaCondenacaoIndividual() {
+		int penaCondenacaoIndividualCorreto = 10;
+		
+		int penaCalculada = julgamentoPrisioneiro.calculaPena(Resposta.DELACAO, Resposta.SEM_DELACAO);
+		assertEquals(penaCondenacaoIndividualCorreto, penaCalculada);
+	}
+	
+	@Test
+	public void testeCalculoPenaCondenacaoCumplices() {
+		int penaCondenacaoCumplicesCorreto = 1;
+		
+		int penaCalculada = julgamentoPrisioneiro.calculaPena(Resposta.SEM_DELACAO, Resposta.DELACAO);
+		assertEquals(penaCondenacaoCumplicesCorreto, penaCalculada);
+	}
+}
+
+
+
+	
+
+
+
+	
+
+
+
