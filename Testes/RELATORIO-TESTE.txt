@@ -101,9 +101,9 @@ public class JulgamentoPrisioneiroTeste {
 	}
 }
 
-4 -> Executado metodos de teste com erro, as variaveis preenchidas pelo programados em java estao 
+4 -> Executado metodos de teste com erro, as variaveis preenchidas pelo programador em java estao 
 	 com valores de pena incorretos.
-
+	
 	JulgamentoPrisioneiroTeste
 	testeCalculoPenaCondenacaoMutua(JulgamentoPrisioneiroTeste)
 	java.lang.AssertionError: expected:<5> but was:<15>
@@ -126,6 +126,42 @@ public class JulgamentoPrisioneiroTeste {
 	private static int PENA_CONDENACAO_INDIVIDUAL = 10;
 	
 	private static int PENA_CONDENACAO_CUMPLICES = 1;
+	
+6 -> Teste com valores de pena corrigidos persistindo com erro em alguns dos testes
+	
+	JulgamentoPrisioneiroTeste
+	testeCalculoPenaCondenacaoCumplices(JulgamentoPrisioneiroTeste)
+	java.lang.AssertionError: expected:<1> but was:<10>
+	
+	testeCalculoPenaCondenacaoIndividual(JulgamentoPrisioneiroTeste)
+	java.lang.AssertionError: expected:<10> but was:<0>
+	
+	testeCalculoPenaInocencia(JulgamentoPrisioneiroTeste)
+	java.lang.AssertionError: expected:<0> but was:<1>
+	
+7 -> Alterada logica do metodo calculaPena na classe JulgamentoPrisioneiro para a correta
+	
+	public int calculaPena(Resposta respostaPrisioneiroA, Resposta respostaPrisioneiroB) {
+		if (respostaPrisioneiroA == Resposta.DELACAO) {
+			if (respostaPrisioneiroB == Resposta.DELACAO) {
+				return PENA_CONDENACAO_MUTUA;
+			} else {
+				return PENA_CONDENACAO_INDIVIDUAL;
+			}
+		} else {
+			if (respostaPrisioneiroB == Resposta.DELACAO) {
+				return PENA_CONDENACAO_CUMPLICES;
+			} else {
+				return PENA_INOCENCIA;
+			}
+		}
+	}
+	
+
+
+
+
+	
 
 
 
